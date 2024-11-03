@@ -1,7 +1,6 @@
 package ru.odincov.tasklist.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import ru.odincov.tasklist.domain.exception.ResourceMappingException;
 import ru.odincov.tasklist.domain.user.Role;
 import ru.odincov.tasklist.domain.user.User;
@@ -15,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
@@ -57,8 +56,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final String UPDATE = """
             UPDATE users
-            SET name = ?
-                username = ?
+            SET name = ?,
+                username = ?,
                 password = ?
             WHERE id = ?""";
 
