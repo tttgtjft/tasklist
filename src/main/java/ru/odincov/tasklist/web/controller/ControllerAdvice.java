@@ -2,6 +2,7 @@ package ru.odincov.tasklist.web.controller;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,6 +65,12 @@ public class ControllerAdvice {
                 )));
 
         return exceptionBody;
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleAuthentication(AuthenticationException e) {
+        return new ExceptionBody("Authentication error.");
     }
 
     @ExceptionHandler(Exception.class)
