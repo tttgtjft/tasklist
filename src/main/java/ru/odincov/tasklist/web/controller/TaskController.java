@@ -23,8 +23,8 @@ public class TaskController {
 
     private final TaskMapper taskMapper;
 
-    @Operation(summary = "Update task")
     @PutMapping
+    @Operation(summary = "Update task")
     @PreAuthorize("canAccessTask(#dto.id)")
     public TaskDto update(@Validated(OnUpdate.class) @RequestBody TaskDto dto) {
         Task task = taskMapper.toEntity(dto);
