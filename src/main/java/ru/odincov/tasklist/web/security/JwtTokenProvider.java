@@ -18,6 +18,8 @@ import ru.odincov.tasklist.service.props.JwtProperties;
 import ru.odincov.tasklist.web.dto.auth.JwtResponse;
 
 import javax.crypto.SecretKey;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -44,13 +46,12 @@ public class JwtTokenProvider {
                 .add("id", userId)
                 .add("roles", resolveRoles(roles))
                 .build();
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + jwtProperties.getAccess());
+        Instant validity = Instant.now()
+                .plus(jwtProperties.getAccess(), ChronoUnit.DAYS);
 
         return Jwts.builder()
                 .claims(claims)
-                .issuedAt(now)
-                .expiration(validity)
+                .expiration(Date.from(validity))
                 .signWith(key)
                 .compact();
     }
@@ -66,13 +67,12 @@ public class JwtTokenProvider {
                 .subject(username)
                 .add("id", userId)
                 .build();
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + jwtProperties.getRefresh());
+        Instant validity = Instant.now()
+                .plus(jwtProperties.getRefresh(), ChronoUnit.DAYS);
 
         return Jwts.builder()
                 .claims(claims)
-                .issuedAt(now)
-                .expiration(validity)
+                .expiration(Date.from(validity))
                 .signWith(key)
                 .compact();
     }
