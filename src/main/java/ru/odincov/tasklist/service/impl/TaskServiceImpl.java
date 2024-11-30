@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.odincov.tasklist.domain.exception.ResourceNotFoundException;
 import ru.odincov.tasklist.domain.task.Status;
 import ru.odincov.tasklist.domain.task.Task;
+import ru.odincov.tasklist.domain.user.User;
 import ru.odincov.tasklist.repository.TaskRepository;
 import ru.odincov.tasklist.service.TaskService;
+import ru.odincov.tasklist.service.UserService;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserService userService;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
         if (task.getStatus() == null) {
             task.setStatus(Status.TODO);
         }
-        taskRepository.update(task);
+        taskRepository.save(task);
 
         return task;
     }
@@ -50,9 +53,10 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Cacheable(value = "TaskService::getById", key = "#task.id")
     public Task create(Task task, Long userId) {
+        User user = userService.getById(userId);
         task.setStatus(Status.TODO);
-        taskRepository.create(task);
-        taskRepository.assignUserById(task.getId(), userId);
+        user.getTasks().add(task);
+        userService.update(user);
 
         return task;
     }
@@ -61,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @CacheEvict(value = "TaskService::getById", key = "#id")
     public void delete(Long id) {
-        taskRepository.delete(id);
+        taskRepository.deleteById(id);
     }
 
 }
